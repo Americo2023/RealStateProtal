@@ -14,11 +14,13 @@ public sealed class CurrentUserService(IHttpContextAccessor httpContextAccessor)
         get
         {
             var value = User.FindFirstValue(ClaimTypes.NameIdentifier)
+                ?? User.FindFirstValue("internal_user_id")
                 ?? User.FindFirstValue("user_id");
             return Guid.TryParse(value, out var userId) ? userId : null;
         }
     }
 
     public bool IsInRole(UserRole role) => User.IsInRole(role.ToString()) ||
+        User.FindAll("realstateportal_role").Any(claim => string.Equals(claim.Value, role.ToString(), StringComparison.OrdinalIgnoreCase)) ||
         User.FindAll("role").Any(claim => string.Equals(claim.Value, role.ToString(), StringComparison.OrdinalIgnoreCase));
 }

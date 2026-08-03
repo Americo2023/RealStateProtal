@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using RealStatePortal.Application.Properties;
 
 namespace RealStatePortal.Api.Controllers;
@@ -16,6 +17,7 @@ public sealed class PropertiesController(IPropertyService propertyService) : Con
         propertyService.GetByIdAsync(id, cancellationToken);
 
     [HttpPost]
+    [Authorize(Policy = "Broker")]
     public async Task<ActionResult<PropertyDto>> Create(CreatePropertyRequest request, CancellationToken cancellationToken)
     {
         var property = await propertyService.CreateAsync(request, cancellationToken);
@@ -23,6 +25,7 @@ public sealed class PropertiesController(IPropertyService propertyService) : Con
     }
 
     [HttpPut("{id:guid}")]
+    [Authorize(Policy = "Broker")]
     public async Task<IActionResult> Update(Guid id, UpdatePropertyRequest request, CancellationToken cancellationToken)
     {
         await propertyService.UpdateAsync(id, request, cancellationToken);
@@ -30,6 +33,7 @@ public sealed class PropertiesController(IPropertyService propertyService) : Con
     }
 
     [HttpPut("{id:guid}/address")]
+    [Authorize(Policy = "Broker")]
     public async Task<IActionResult> SetAddress(Guid id, SetPropertyAddressRequest request, CancellationToken cancellationToken)
     {
         await propertyService.SetAddressAsync(id, request, cancellationToken);
@@ -37,6 +41,7 @@ public sealed class PropertiesController(IPropertyService propertyService) : Con
     }
 
     [HttpPost("{id:guid}/transfer/{brokerId:guid}")]
+    [Authorize(Policy = "Broker")]
     public async Task<IActionResult> Transfer(Guid id, Guid brokerId, CancellationToken cancellationToken)
     {
         await propertyService.TransferAsync(id, brokerId, cancellationToken);
@@ -44,6 +49,7 @@ public sealed class PropertiesController(IPropertyService propertyService) : Con
     }
 
     [HttpPost("{id:guid}/publish")]
+    [Authorize(Policy = "Broker")]
     public async Task<IActionResult> Publish(Guid id, CancellationToken cancellationToken)
     {
         await propertyService.PublishAsync(id, cancellationToken);
@@ -51,6 +57,7 @@ public sealed class PropertiesController(IPropertyService propertyService) : Con
     }
 
     [HttpPost("{id:guid}/withdraw")]
+    [Authorize(Policy = "Broker")]
     public async Task<IActionResult> Withdraw(Guid id, CancellationToken cancellationToken)
     {
         await propertyService.WithdrawAsync(id, cancellationToken);
@@ -58,6 +65,7 @@ public sealed class PropertiesController(IPropertyService propertyService) : Con
     }
 
     [HttpPost("{id:guid}/sell")]
+    [Authorize(Policy = "Broker")]
     public async Task<IActionResult> Sell(Guid id, CancellationToken cancellationToken)
     {
         await propertyService.MarkAsSoldAsync(id, cancellationToken);
@@ -65,6 +73,7 @@ public sealed class PropertiesController(IPropertyService propertyService) : Con
     }
 
     [HttpDelete("{id:guid}")]
+    [Authorize(Policy = "Broker")]
     public async Task<IActionResult> Delete(Guid id, CancellationToken cancellationToken)
     {
         await propertyService.DeleteAsync(id, cancellationToken);
@@ -72,6 +81,7 @@ public sealed class PropertiesController(IPropertyService propertyService) : Con
     }
 
     [HttpPost("{id:guid}/images")]
+    [Authorize(Policy = "Broker")]
     [RequestSizeLimit(10 * 1024 * 1024)]
     public async Task<IActionResult> AddImage(
         Guid id,
@@ -90,6 +100,7 @@ public sealed class PropertiesController(IPropertyService propertyService) : Con
     }
 
     [HttpDelete("{id:guid}/images/{imageId:guid}")]
+    [Authorize(Policy = "Broker")]
     public async Task<IActionResult> RemoveImage(Guid id, Guid imageId, CancellationToken cancellationToken)
     {
         await propertyService.RemoveImageAsync(id, imageId, cancellationToken);

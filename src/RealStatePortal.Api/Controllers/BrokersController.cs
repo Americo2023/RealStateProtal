@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using RealStatePortal.Application.Brokers;
 
 namespace RealStatePortal.Api.Controllers;
@@ -16,6 +17,7 @@ public sealed class BrokersController(IBrokerAdministrationService brokerService
         brokerService.GetByUserIdAsync(userId, cancellationToken);
 
     [HttpPost]
+    [Authorize(Policy = "Administrator")]
     public async Task<ActionResult<BrokerDto>> Create(CreateBrokerRequest request, CancellationToken cancellationToken)
     {
         var broker = await brokerService.CreateAsync(request, cancellationToken);
@@ -23,6 +25,7 @@ public sealed class BrokersController(IBrokerAdministrationService brokerService
     }
 
     [HttpPost("{userId:guid}/deactivate")]
+    [Authorize(Policy = "Administrator")]
     public async Task<IActionResult> Deactivate(Guid userId, CancellationToken cancellationToken)
     {
         await brokerService.DeactivateAsync(userId, cancellationToken);
