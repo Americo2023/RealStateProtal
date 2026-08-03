@@ -467,12 +467,14 @@ API Layer
 ### Phase 6
 Auth0 Integration
 ### Phase 7
-Frontend
+Frontend: Crear una pagina simple para probar el login/logout
 ### Phase 8
-Search
+Frontend: Crear una area publica y otra privada (para brokers y administradores) simple
 ### Phase 9
-Favorites
+Search
 ### Phase 10
+Favorites
+### Phase 11
 Deployment
  
 ## 23. Future Enhancements
