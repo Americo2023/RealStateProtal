@@ -467,14 +467,59 @@ API Layer
 ### Phase 6
 Auth0 Integration
 ### Phase 7
-Frontend: Crear una pagina simple para probar el login/logout
+Frontend: Crear diseño minimo
++----------------------------------+
+| Logo | Menu                      |
++----------------------------------+
+|                                  |
+| Content Area                     |
+|                                  |
++----------------------------------+
 ### Phase 8
-Frontend: Crear una area publica (para visitantes) y otra privada (para brokers y administradores) cada una con una landing page.
-### Phase 9
-Search
-### Phase 10
-Favorites
-### Phase 11
+Frontend: Validar Login y Logout de extremo a extremo.
+Crear pagina temporal: /auth-test con botones [login] [logout] y mostrar:
+
+- IsAuthenticated
+- User Name
+- Email
+- Roles
+- Auth0 User Id
+
+Ademas:
+- Test Public Endpoint
+- Test Protected Endpoint
+### Phase 9 - Navigation & Areas
+- Public Area
+- Private Area protegida por login, sin funcionalidad por el momento
+### Phase 10 - Broker Portal
+- Dashboard
+- Properties
+- Create Property
+- Edit Property
+- Property Images
+- Inquiries
+### Phase 11 - Administration
+- Manage Brokers
+- Manage Users
+- Manage Properties
+- Audit Logs
+### Phase 12 - Public Catalog
+- Home
+- Property Search
+- Property Detail
+- Map View
+- Contact Broker
+### Phase 13 - Favorites
+- My Favorites
+- Add Favorites
+- Remove Favorites
+- Sold properties remain visible.
+- Draft properties remain visible to previous owners.
+### Phase 14 - Search
+- Quick Search
+- Advanced Search
+- Sorting
+### Phase 15
 Deployment
  
 ## 23. Future Enhancements
