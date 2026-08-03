@@ -39,9 +39,11 @@ public sealed class ContactInquiryService(
         inquiryRepository.Add(inquiry);
         await unitOfWork.SaveChangesAsync(cancellationToken);
         await emailSender.SendAsync(
-            broker.Email,
-            $"New inquiry for property {property.ReferenceNumber}",
-            $"{inquiry.VisitorName} ({inquiry.VisitorEmail}) sent: {inquiry.Message}",
+            new EmailMessage(
+                broker.Email,
+                $"New inquiry for property {property.ReferenceNumber}",
+                $"{inquiry.VisitorName} ({inquiry.VisitorEmail}) sent: {inquiry.Message}",
+                [inquiry.VisitorEmail]),
             cancellationToken);
     }
 }

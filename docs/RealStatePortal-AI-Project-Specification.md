@@ -319,7 +319,27 @@ Filtros:
 4. PriceHighToLow
  
 ## 12. Communication Model
-La comunicación principal entre cliente y corredor será mediante correo electrónico. 
+La comunicación principal entre cliente y corredor será mediante correo electrónico.
+El flujo de una solicitud de contacto será:
+
+```text
+Usuario
+↓
+Formulario del portal
+↓
+Guardar ContactInquiry en la base de datos
+↓
+Enviar correo al broker
+↓
+Enviar una copia del mismo mensaje al usuario
+```
+
+El portal registrará la solicitud antes de intentar enviar los correos. El correo
+se enviará al broker responsable de la propiedad y el visitante recibirá una
+copia mediante `Cc`. Si el registro en la base de datos falla, no se enviará
+ningún correo. Las credenciales y configuración del proveedor de correo deben
+provenir de variables de entorno o configuración externa.
+
 El portal registrará solicitudes de contacto mediante:
 
 1. ContactInquiry
