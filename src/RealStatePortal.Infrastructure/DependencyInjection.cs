@@ -1,6 +1,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authentication;
 using RealStatePortal.Application.Abstractions.Persistence;
 using RealStatePortal.Infrastructure.Persistence;
 using RealStatePortal.Infrastructure.Persistence.Repositories;
@@ -36,6 +37,8 @@ public static class DependencyInjection
         services.AddSingleton<IImageStorage, LocalImageStorage>();
         services.AddTransient<IEmailSender, SmtpEmailSender>();
         services.AddScoped<ICurrentUserService, CurrentUserService>();
+        services.AddScoped<IIdentityProvisioningService, IdentityProvisioningService>();
+        services.AddTransient<IClaimsTransformation, Auth0ClaimsTransformation>();
         return services;
     }
 }

@@ -1,10 +1,12 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using RealStatePortal.Application.Favorites;
 
 namespace RealStatePortal.Api.Controllers;
 
 [ApiController]
 [Route("api/favorites")]
+[Authorize(Policy = "RegisteredUser")]
 public sealed class FavoritesController(IFavoriteService favoriteService) : ControllerBase
 {
     [HttpGet]

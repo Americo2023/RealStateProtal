@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using RealStatePortal.Application.Users;
 using RealStatePortal.Domain.Enums;
 
@@ -6,6 +7,7 @@ namespace RealStatePortal.Api.Controllers;
 
 [ApiController]
 [Route("api/users")]
+[Authorize(Policy = "Administrator")]
 public sealed class UsersController(IUserAdministrationService userService) : ControllerBase
 {
     [HttpGet]
