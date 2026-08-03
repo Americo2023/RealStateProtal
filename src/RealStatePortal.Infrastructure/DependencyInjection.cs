@@ -10,6 +10,8 @@ using RealStatePortal.Infrastructure.Storage;
 using RealStatePortal.Infrastructure.Time;
 using RealStatePortal.Application.Abstractions.Email;
 using RealStatePortal.Infrastructure.Email;
+using RealStatePortal.Application.Abstractions.Authentication;
+using RealStatePortal.Infrastructure.Authentication;
 
 namespace RealStatePortal.Infrastructure;
 
@@ -33,6 +35,7 @@ public static class DependencyInjection
         services.AddSingleton<IDateTimeProvider, SystemDateTimeProvider>();
         services.AddSingleton<IImageStorage, LocalImageStorage>();
         services.AddTransient<IEmailSender, SmtpEmailSender>();
+        services.AddScoped<ICurrentUserService, CurrentUserService>();
         return services;
     }
 }

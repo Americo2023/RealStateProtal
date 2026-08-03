@@ -11,6 +11,7 @@ public static class DependencyInjection
         this IServiceCollection services,
         IConfiguration configuration)
     {
+        services.AddHttpContextAccessor();
         services.AddApplication();
         services.AddInfrastructure(configuration);
         return services;
