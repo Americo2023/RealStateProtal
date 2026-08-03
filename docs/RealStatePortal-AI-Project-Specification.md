@@ -469,7 +469,7 @@ Auth0 Integration
 ### Phase 7
 Frontend: Crear una pagina simple para probar el login/logout
 ### Phase 8
-Frontend: Crear una area publica y otra privada (para brokers y administradores) simple
+Frontend: Crear una area publica (para visitantes) y otra privada (para brokers y administradores) cada una con una landing page.
 ### Phase 9
 Search
 ### Phase 10
