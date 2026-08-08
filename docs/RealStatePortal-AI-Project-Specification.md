@@ -350,6 +350,19 @@ No existirá sistema interno de mensajería.
 ### Authentication
 Proveedor:
          Auth0
+
+### Secret and Credential Boundary
+- Todas las credenciales, secretos y parámetros sensibles de Auth0, incluidos
+  `client_id`, `client_secret`, dominios privados, tokens y contraseñas, deben
+  residir exclusivamente en el backend (`RealStatePortal.Api` o
+  `RealStatePortal.Infrastructure`).
+- Estos valores deben provenir de variables de entorno, secret managers o
+  configuración externa y nunca deben guardarse en el repositorio.
+- El frontend no debe contener, leer, compilar ni recibir ningún secreto,
+  contraseña, token, `client_id` o `client_secret`.
+- El frontend se comunica con el backend mediante la API HTTP. Los flujos de
+  autenticación e integración con proveedores externos deben estar encapsulados
+  por el backend.
  
 ### Authorization
 Roles:
