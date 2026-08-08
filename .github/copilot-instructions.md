@@ -89,6 +89,48 @@ inválidas deben rechazarse desde Domain.
 
 ## Frontend
 
+## Frontend Coding Standards
+
+### General
+
+Todo el código frontend debe ser:
+
+- Legible.
+- Consistente.
+- Fuertemente tipado.
+- Listo para producción.
+- Fácil de mantener.
+
+### TypeScript
+
+- Usar TypeScript en modo estricto.
+- Evitar el uso de `any`.
+- Preferir interfaces y tipos explícitos.
+- Usar contratos tipados para las APIs.
+
+### React Components
+
+- Usar únicamente componentes funcionales.
+- No usar componentes de clase.
+- Mantener los componentes enfocados en una sola responsabilidad.
+- Organizar los componentes por funcionalidad de negocio.
+
+### Functions
+
+Usar arrow functions por defecto.
+
+Ejemplo preferido:
+
+```ts
+const getPropertyById = async (
+  propertyId: number
+): Promise<PropertyDto> => {
+  return await apiClient.get<PropertyDto>(
+    `/properties/${propertyId}`
+  );
+};
+```
+
 - Organizar el código por features: properties, favorites, brokers, users e
   inquiries.
 - Usar props, respuestas API y variables de entorno tipadas.

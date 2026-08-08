@@ -396,6 +396,49 @@ No se utilizará CQRS/MediatR en V1.
 6. Leaflet
 
 La implementación de mapas debe abstraerse para permitir migrar posteriormente a Google Maps.
+
+## Frontend Coding Standards
+
+### General
+
+All frontend code must be:
+
+- Readable
+- Consistent
+- Strongly typed
+- Production ready
+- Easy to maintain
+
+### TypeScript
+
+- Use TypeScript strict mode.
+- Avoid the use of `any`.
+- Prefer explicit interfaces and types.
+- Use typed API contracts.
+
+### React Components
+
+- Use functional components only.
+- Do not use class components.
+- Keep components focused on a single responsibility.
+- Organize components by business feature.
+
+### Functions
+
+Use arrow functions by default.
+
+Examples:
+
+✅ Preferred
+
+```ts
+const getPropertyById = async (
+  propertyId: number
+): Promise<PropertyDto> => {
+  return await apiClient.get<PropertyDto>(
+    `/properties/${propertyId}`
+  );
+};
  
 ## 17. Image Storage Strategy
 ### Desarrollo
