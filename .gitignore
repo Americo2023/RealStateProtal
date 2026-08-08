@@ -1,0 +1,12 @@
+.DS_Store
+.env
+.env.*
+!.env.example
+
+**/bin/
+**/obj/
+frontend/node_modules/
+frontend/dist/
+
+src/RealStatePortal.Api/wwwroot/uploads/*
+!src/RealStatePortal.Api/wwwroot/uploads/.gitkeep

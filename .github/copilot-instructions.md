@@ -77,6 +77,15 @@ inválidas deben rechazarse desde Domain.
 ## Auth0 y autorización
 
 - Auth0 es el proveedor de identidad, no la fuente única de permisos.
+- Todas las credenciales, secretos y parámetros sensibles de Auth0, incluidos
+  `client_id`, `client_secret`, dominios privados, tokens y contraseñas, deben
+  residir exclusivamente en Backend/API o Infrastructure y provenir de
+  configuración externa o variables de entorno.
+- El frontend no puede contener, leer, compilar ni recibir credenciales,
+  `client_id`, `client_secret`, contraseñas, tokens de acceso/refresco ni otros
+  secretos. El frontend debe comunicarse con la API mediante contratos HTTP;
+  cualquier flujo de autenticación sensible debe estar encapsulado por el
+  backend.
 - Mantener usuario, perfil, estado activo y roles internos en SQL Server.
 - Usar claims, roles y policies de ASP.NET Core.
 - Preservar los roles `Visitor`, `Registered User`, `Broker` y `Administrator`.
