@@ -1,8 +1,0 @@
-<Solution>
-  <Folder Name="/src/">
-    <Project Path="src/RealStatePortal.Api/RealStatePortal.Api.csproj" />
-    <Project Path="src/RealStatePortal.Application/RealStatePortal.Application.csproj" />
-    <Project Path="src/RealStatePortal.Domain/RealStatePortal.Domain.csproj" />
-    <Project Path="src/RealStatePortal.Infrastructure/RealStatePortal.Infrastructure.csproj" />
-  </Folder>
-</Solution>
