@@ -4,6 +4,13 @@ namespace RealStatePortal.Domain.Entities;
 
 public sealed class PropertyImage : Entity
 {
+    private PropertyImage()
+        : base()
+    {
+        Url = null!;
+        AltText = null!;
+    }
+
     public PropertyImage(string url, string altText, int sortOrder, bool isPrimary, Guid? id = null)
         : base(id)
     {

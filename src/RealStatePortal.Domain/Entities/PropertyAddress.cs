@@ -5,6 +5,18 @@ namespace RealStatePortal.Domain.Entities;
 
 public sealed class PropertyAddress : Entity
 {
+    private PropertyAddress()
+        : base()
+    {
+        Street = null!;
+        StreetNumber = null!;
+        PostalCode = null!;
+        City = null!;
+        Region = null!;
+        Country = null!;
+        Coordinates = null!;
+    }
+
     public PropertyAddress(
         string street,
         string streetNumber,
@@ -25,7 +37,7 @@ public sealed class PropertyAddress : Entity
     public string City { get; private set; } = null!;
     public string Region { get; private set; } = null!;
     public string Country { get; private set; } = null!;
-    public Coordinates Coordinates { get; private set; }
+    public Coordinates Coordinates { get; private set; } = null!;
 
     internal void Update(
         string street,

@@ -4,6 +4,11 @@ namespace RealStatePortal.Domain.Entities;
 
 public sealed class Favorite : Entity
 {
+    private Favorite()
+        : base()
+    {
+    }
+
     public Favorite(Guid userId, Guid propertyId, DateTimeOffset? createdAt = null, Guid? id = null)
         : base(id)
     {

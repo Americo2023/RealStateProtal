@@ -2,8 +2,14 @@ using RealStatePortal.Domain.Common;
 
 namespace RealStatePortal.Domain.ValueObjects;
 
-public readonly record struct Money
+public sealed record Money
 {
+    private Money()
+    {
+        Amount = 0;
+        Currency = string.Empty;
+    }
+
     public Money(decimal amount, string currency)
     {
         Amount = Guard.NonNegative(amount, nameof(amount));

@@ -1,3 +1,5 @@
+name: realstateportal
+
 services:
   sqlserver:
     image: mcr.microsoft.com/mssql/server:2022-latest
@@ -14,3 +16,4 @@ services:
 
 volumes:
   sqlserver-data:
+    name: realstateportal_sqlserver-data

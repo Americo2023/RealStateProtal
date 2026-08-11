@@ -4,6 +4,15 @@ namespace RealStatePortal.Domain.Entities;
 
 public sealed class User : Entity
 {
+    private User()
+        : base()
+    {
+        Auth0UserId = null!;
+        Email = null!;
+        FirstName = null!;
+        LastName = null!;
+    }
+
     public User(
         string auth0UserId,
         string email,

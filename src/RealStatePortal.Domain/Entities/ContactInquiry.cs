@@ -4,6 +4,14 @@ namespace RealStatePortal.Domain.Entities;
 
 public sealed class ContactInquiry : Entity
 {
+    private ContactInquiry()
+        : base()
+    {
+        VisitorName = null!;
+        VisitorEmail = null!;
+        Message = null!;
+    }
+
     public ContactInquiry(
         Guid propertyId,
         string visitorName,
