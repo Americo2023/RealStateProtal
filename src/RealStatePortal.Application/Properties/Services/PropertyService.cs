@@ -18,7 +18,7 @@ public sealed class PropertyService(
     public async Task<Result<PropertyDto>> GetByIdAsync(Guid propertyId, CancellationToken cancellationToken = default)
     {
         var property = await propertyRepository.GetByIdAsync(propertyId, cancellationToken);
-        return property is null
+        return property is null || (!currentUser.IsAuthenticated && property.Status != Domain.Enums.PropertyStatus.Published)
             ? Result<PropertyDto>.Failure("Property was not found.")
             : Result<PropertyDto>.Success(Map(property));
     }
