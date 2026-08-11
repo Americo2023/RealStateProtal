@@ -4,6 +4,15 @@ namespace RealStatePortal.Domain.Entities;
 
 public sealed class BrokerProfile : Entity
 {
+    private BrokerProfile()
+        : base()
+    {
+        FullName = null!;
+        Email = null!;
+        Phone = null!;
+        Bio = null!;
+    }
+
     public BrokerProfile(
         Guid userId,
         string fullName,

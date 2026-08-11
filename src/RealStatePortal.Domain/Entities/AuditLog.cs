@@ -4,6 +4,14 @@ namespace RealStatePortal.Domain.Entities;
 
 public sealed class AuditLog : Entity
 {
+    private AuditLog()
+        : base()
+    {
+        EntityName = null!;
+        Action = null!;
+        Details = null!;
+    }
+
     public AuditLog(
         string entityName,
         Guid entityId,

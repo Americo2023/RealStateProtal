@@ -3,6 +3,10 @@
   <ItemGroup>
     <ProjectReference Include="..\RealStatePortal.Application\RealStatePortal.Application.csproj" />
     <ProjectReference Include="..\RealStatePortal.Infrastructure\RealStatePortal.Infrastructure.csproj" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.10">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
   </ItemGroup>
 
   <PropertyGroup>

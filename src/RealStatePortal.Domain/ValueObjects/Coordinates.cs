@@ -1,7 +1,13 @@
 namespace RealStatePortal.Domain.ValueObjects;
 
-public readonly record struct Coordinates
+public sealed record Coordinates
 {
+    private Coordinates()
+    {
+        Latitude = 0;
+        Longitude = 0;
+    }
+
     public Coordinates(decimal latitude, decimal longitude)
     {
         if (latitude is < -90 or > 90)

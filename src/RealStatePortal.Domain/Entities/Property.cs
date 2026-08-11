@@ -9,6 +9,15 @@ public sealed class Property : AggregateRoot
 {
     private readonly List<PropertyImage> images = [];
 
+    private Property()
+        : base()
+    {
+        ReferenceNumber = null!;
+        Title = null!;
+        Description = null!;
+        Price = null!;
+    }
+
     public Property(
         string referenceNumber,
         string title,

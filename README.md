@@ -25,4 +25,9 @@ To start SQL Server, create a local `.env` with `MSSQL_SA_PASSWORD` and run:
 docker compose up -d
 ```
 
+The API reads the SQL Server password from the backend-only environment variable
+`ConnectionStrings__DefaultConnection` or from user secrets. Do not add a
+password to `appsettings*.json`. For local execution, append the password to
+the development connection string through your shell or IDE launch settings.
+
 Never commit `.env` or credentials.
