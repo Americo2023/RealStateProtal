@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -52,6 +53,8 @@ public sealed class AuthController(ICurrentUserService currentUser, IConfigurati
         return Ok(new
         {
             currentUser.IsAuthenticated,
+            UserName = User.Identity?.Name ?? User.FindFirst("name")?.Value,
+            Email = User.FindFirst(ClaimTypes.Email)?.Value ?? User.FindFirst("email")?.Value,
             currentUser.Auth0UserId,
             currentUser.Roles
         });

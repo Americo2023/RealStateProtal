@@ -17,6 +17,16 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddProblemDetails();
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("Frontend", policy =>
+    {
+        policy.WithOrigins("http://localhost:5173")
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowCredentials();
+    });
+});
 builder.Services.AddAuthentication(options =>
     {
         options.DefaultScheme = "smart";
@@ -159,6 +169,7 @@ builder.Services.AddInfrastructure(builder.Configuration);
 var app = builder.Build();
 
 app.UseExceptionHandler();
+app.UseCors("Frontend");
 app.UseAuthentication();
 app.UseAuthorization();
 
