@@ -21,6 +21,7 @@ public abstract class ApiControllerBase : ControllerBase
         var statusCode = error switch
         {
             "Property was not found." => StatusCodes.Status404NotFound,
+            "User was not found." => StatusCodes.Status404NotFound,
             "Authentication is required." or "An authenticated broker is required." => StatusCodes.Status401Unauthorized,
             "The current user cannot manage this property." or "Only brokers can create properties." => StatusCodes.Status403Forbidden,
             _ when error.Contains("already", StringComparison.OrdinalIgnoreCase) => StatusCodes.Status409Conflict,

@@ -16,5 +16,9 @@ public sealed class CurrentUserService(IHttpContextAccessor httpContextAccessor)
 
     public bool IsAuthenticated => User.Identity?.IsAuthenticated == true;
 
-    public IReadOnlyCollection<string> Roles => User.FindAll(ClaimTypes.Role).Select(claim => claim.Value).Distinct(StringComparer.OrdinalIgnoreCase).ToArray();
+    public IReadOnlyCollection<string> Roles => User.Claims
+        .Where(claim => claim.Type == ClaimTypes.Role || claim.Type == "roles" || claim.Type.EndsWith("/roles", StringComparison.OrdinalIgnoreCase))
+        .Select(claim => claim.Value)
+        .Distinct(StringComparer.OrdinalIgnoreCase)
+        .ToArray();
 }
