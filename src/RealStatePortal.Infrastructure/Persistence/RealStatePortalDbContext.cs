@@ -10,6 +10,7 @@ public sealed class RealStatePortalDbContext(DbContextOptions<RealStatePortalDbC
     public DbSet<PropertyImage> PropertyImages => Set<PropertyImage>();
     public DbSet<Favorite> Favorites => Set<Favorite>();
     public DbSet<User> Users => Set<User>();
+    public DbSet<UserRoleAssignment> UserRoles => Set<UserRoleAssignment>();
     public DbSet<BrokerProfile> BrokerProfiles => Set<BrokerProfile>();
     public DbSet<ContactInquiry> ContactInquiries => Set<ContactInquiry>();
     public DbSet<AuditLog> AuditLogs => Set<AuditLog>();
