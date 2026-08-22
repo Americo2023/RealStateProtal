@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import './App.css'
 
 interface Property {
@@ -9,6 +9,16 @@ interface Property {
   details: string
   image: string
 }
+
+interface AuthUser {
+  isAuthenticated: boolean
+  userName: string | null
+  email: string | null
+  auth0UserId: string | null
+  roles: string[]
+}
+
+const apiUrl = 'http://localhost:5080'
 
 const properties: Property[] = [
   {
@@ -37,7 +47,9 @@ const properties: Property[] = [
   },
 ]
 
-function App() {
+const App = () => window.location.pathname === '/auth-test' ? <AuthTest /> : <Home />
+
+const Home = () => {
   const [search, setSearch] = useState('')
   const normalizedSearch = search.trim().toLowerCase()
   const visibleProperties = properties.filter((property) =>
@@ -46,19 +58,7 @@ function App() {
 
   return (
     <div className="app-shell">
-      <header className="site-header">
-        <a className="brand" href="/" aria-label="RealStatePortal inicio">
-          <span className="brand-mark">R</span>
-          <span>RealStatePortal</span>
-        </a>
-        <nav className="main-nav" aria-label="Navegacion principal">
-          <a className="active" href="#properties">Propiedades</a>
-          <a href="#about">Como funciona</a>
-          <a href="#contact">Contacto</a>
-        </nav>
-        <a className="login-link" href="http://localhost:5080/auth/login">Iniciar sesion</a>
-      </header>
-
+      <SiteHeader />
       <main>
         <section className="intro" id="about">
           <div>
@@ -110,13 +110,114 @@ function App() {
           {visibleProperties.length === 0 && <p className="empty-state">No encontramos propiedades para esa busqueda.</p>}
         </section>
       </main>
-
-      <footer id="contact">
-        <span>RealStatePortal</span>
-        <span>Propiedades que se sienten como hogar.</span>
-      </footer>
+      <Footer />
     </div>
   )
 }
+
+const AuthTest = () => {
+  const [user, setUser] = useState<AuthUser | null>(null)
+  const [publicResult, setPublicResult] = useState<string>('Sin probar')
+  const [protectedResult, setProtectedResult] = useState<string>('Sin probar')
+  const [error, setError] = useState<string | null>(null)
+
+  const loadUser = async () => {
+    try {
+      setError(null)
+      const response = await fetch(`${apiUrl}/api/auth/me`, { credentials: 'include' })
+      if (!response.ok) {
+        setUser(null)
+        return
+      }
+      setUser(await response.json() as AuthUser)
+    } catch {
+      setError('No se pudo conectar con la API.')
+    }
+  }
+
+  const testEndpoint = async (endpoint: string, setResult: (result: string) => void) => {
+    try {
+      const response = await fetch(`${apiUrl}${endpoint}`, { credentials: 'include' })
+      setResult(`${response.status} ${response.statusText}`)
+    } catch {
+      setResult('Error de conexión')
+    }
+  }
+
+  useEffect(() => {
+    void Promise.resolve().then(loadUser)
+  }, [])
+
+  return (
+    <div className="app-shell auth-test-page">
+      <SiteHeader />
+      <main>
+        <section className="auth-test-intro">
+          <p className="eyebrow">Fase 8 · Auth0</p>
+          <h1>Prueba de autenticación</h1>
+          <p className="intro-copy">Comprueba la sesión del portal y el acceso a sus endpoints.</p>
+        </section>
+        <section className="auth-actions" aria-label="Acciones de autenticación">
+          <a className="primary-action" href={`${apiUrl}/auth/login`}>Iniciar sesión</a>
+          <a className="secondary-action" href={`${apiUrl}/auth/logout`}>Cerrar sesión</a>
+          <button type="button" onClick={() => void loadUser()}>Actualizar sesión</button>
+        </section>
+        {error && <p className="error-message">{error}</p>}
+        <section className="auth-grid">
+          <div className="auth-panel">
+            <div className="panel-heading">
+              <p className="eyebrow">Identidad</p>
+              <span className={user?.isAuthenticated ? 'status active-status' : 'status'}>
+                {user?.isAuthenticated ? 'Autenticado' : 'No autenticado'}
+              </span>
+            </div>
+            <dl className="identity-list">
+              <div><dt>Nombre de usuario</dt><dd>{user?.userName ?? 'No disponible'}</dd></div>
+              <div><dt>Email</dt><dd>{user?.email ?? 'No disponible'}</dd></div>
+              <div><dt>Auth0 User Id</dt><dd>{user?.auth0UserId ?? 'No disponible'}</dd></div>
+              <div><dt>Roles</dt><dd>{user?.roles.join(', ') || 'Ninguno'}</dd></div>
+            </dl>
+          </div>
+          <div className="auth-panel endpoint-panel">
+            <p className="eyebrow">Endpoints</p>
+            <div className="endpoint-row">
+              <span>Catálogo público</span>
+              <strong>{publicResult}</strong>
+              <button type="button" onClick={() => void testEndpoint('/api/properties', setPublicResult)}>Probar</button>
+            </div>
+            <div className="endpoint-row">
+              <span>Perfil protegido</span>
+              <strong>{protectedResult}</strong>
+              <button type="button" onClick={() => void testEndpoint('/api/auth/me', setProtectedResult)}>Probar</button>
+            </div>
+          </div>
+        </section>
+      </main>
+      <Footer />
+    </div>
+  )
+}
+
+const SiteHeader = () => (
+  <header className="site-header">
+    <a className="brand" href="/" aria-label="RealStatePortal inicio">
+      <span className="brand-mark">R</span>
+      <span>RealStatePortal</span>
+    </a>
+    <nav className="main-nav" aria-label="Navegacion principal">
+      <a href="/#properties">Propiedades</a>
+      <a href="/auth-test">Auth test</a>
+      <a href="/#contact">Contacto</a>
+    </nav>
+    <a className="login-link" href={`${apiUrl}/auth/login`}>Iniciar sesion</a>
+  </header>
+)
+
+const Footer = () => (
+  <footer id="contact">
+    <span>RealStatePortal</span>
+    <span>Propiedades que se sienten como hogar.</span>
+  </footer>
+)
 
 export default App
