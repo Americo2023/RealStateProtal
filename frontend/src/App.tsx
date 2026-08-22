@@ -1,121 +1,121 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
 import './App.css'
 
+interface Property {
+  id: number
+  title: string
+  location: string
+  price: string
+  details: string
+  image: string
+}
+
+const properties: Property[] = [
+  {
+    id: 1,
+    title: 'Apartamento luminoso',
+    location: 'Valencia, Ruzafa',
+    price: '285.000 EUR',
+    details: '3 habitaciones · 2 banos · 104 m2',
+    image: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=900&q=80',
+  },
+  {
+    id: 2,
+    title: 'Casa con jardin',
+    location: 'Alicante, San Juan',
+    price: '420.000 EUR',
+    details: '4 habitaciones · 3 banos · 188 m2',
+    image: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=900&q=80',
+  },
+  {
+    id: 3,
+    title: 'Atico con terraza',
+    location: 'Madrid, Chamberi',
+    price: '610.000 EUR',
+    details: '2 habitaciones · 2 banos · 92 m2',
+    image: 'https://images.unsplash.com/photo-1600607688969-a5bfcd646154?auto=format&fit=crop&w=900&q=80',
+  },
+]
+
 function App() {
-  const [count, setCount] = useState(0)
+  const [search, setSearch] = useState('')
+  const normalizedSearch = search.trim().toLowerCase()
+  const visibleProperties = properties.filter((property) =>
+    `${property.title} ${property.location}`.toLowerCase().includes(normalizedSearch),
+  )
 
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.tsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+    <div className="app-shell">
+      <header className="site-header">
+        <a className="brand" href="/" aria-label="RealStatePortal inicio">
+          <span className="brand-mark">R</span>
+          <span>RealStatePortal</span>
+        </a>
+        <nav className="main-nav" aria-label="Navegacion principal">
+          <a className="active" href="#properties">Propiedades</a>
+          <a href="#about">Como funciona</a>
+          <a href="#contact">Contacto</a>
+        </nav>
+        <a className="login-link" href="http://localhost:5080/auth/login">Iniciar sesion</a>
+      </header>
 
-      <div className="ticks"></div>
+      <main>
+        <section className="intro" id="about">
+          <div>
+            <p className="eyebrow">Encuentra tu proximo lugar</p>
+            <h1>Espacios para vivir bien.</h1>
+            <p className="intro-copy">Explora propiedades seleccionadas y encuentra un hogar que encaje contigo.</p>
+          </div>
+          <div className="intro-note">
+            <strong>Catalogo abierto</strong>
+            <span>Propiedades verificadas por nuestro equipo.</span>
+          </div>
+        </section>
 
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
+        <section className="search-panel" aria-label="Buscar propiedades">
+          <label htmlFor="property-search">Buscar por ciudad o zona</label>
+          <div className="search-row">
+            <input
+              id="property-search"
+              type="search"
+              placeholder="Ej. Valencia, Chamberi..."
+              value={search}
+              onChange={(event) => setSearch(event.target.value)}
+            />
+            <button type="button" onClick={() => setSearch('')}>Limpiar</button>
+          </div>
+        </section>
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
+        <section className="property-section" id="properties">
+          <div className="section-heading">
+            <div>
+              <p className="eyebrow">Seleccion actual</p>
+              <h2>Propiedades destacadas</h2>
+            </div>
+            <span className="result-count">{visibleProperties.length} resultados</span>
+          </div>
+          <div className="property-grid">
+            {visibleProperties.map((property) => (
+              <article className="property-card" key={property.id}>
+                <img src={property.image} alt={property.title} />
+                <div className="property-content">
+                  <p className="property-location">{property.location}</p>
+                  <h3>{property.title}</h3>
+                  <p className="property-details">{property.details}</p>
+                  <strong className="property-price">{property.price}</strong>
+                </div>
+              </article>
+            ))}
+          </div>
+          {visibleProperties.length === 0 && <p className="empty-state">No encontramos propiedades para esa busqueda.</p>}
+        </section>
+      </main>
+
+      <footer id="contact">
+        <span>RealStatePortal</span>
+        <span>Propiedades que se sienten como hogar.</span>
+      </footer>
+    </div>
   )
 }
 

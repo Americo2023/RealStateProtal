@@ -148,6 +148,14 @@ const getPropertyById = async (
 - Mantener Leaflet detrás de un proveedor de mapas intercambiable.
 - No añadir pruebas frontend salvo solicitud explícita.
 
+### CSS
+
+- Mantener los archivos CSS legibles y formateados en varias líneas.
+- Escribir cada selector y propiedad en bloques separados; no comprimir reglas
+  completas en una sola línea.
+- Agrupar las media queries y mantener sus reglas con el mismo formato
+  multilinea.
+
 ## Chat modes disponibles
 
 Usar el mode especializado cuando corresponda:
