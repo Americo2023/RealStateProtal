@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { BrowserRouter, Link, Navigate, Route, Routes } from 'react-router-dom'
 import './App.css'
 
 interface Property {
@@ -47,7 +48,72 @@ const properties: Property[] = [
   },
 ]
 
-const App = () => window.location.pathname === '/auth-test' ? <AuthTest /> : <Home />
+const App = () => (
+  <BrowserRouter>
+    <Routes>
+      <Route path="/" element={<Navigate to="/public" replace />} />
+      <Route path="/public" element={<Home />} />
+      <Route path="/private" element={<ProtectedRoute />} />
+      <Route path="/auth-test" element={<AuthTest />} />
+      <Route path="*" element={<Navigate to="/public" replace />} />
+    </Routes>
+  </BrowserRouter>
+)
+
+const ProtectedRoute = () => {
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null)
+
+  useEffect(() => {
+    void Promise.resolve().then(async () => {
+      try {
+        const response = await fetch(`${apiUrl}/api/auth/me`, { credentials: 'include' })
+        setIsAuthenticated(response.ok)
+      } catch {
+        setIsAuthenticated(false)
+      }
+    })
+  }, [])
+
+  useEffect(() => {
+    if (isAuthenticated === false) {
+      window.location.assign(`${apiUrl}/auth/login?returnUrl=/private`)
+    }
+  }, [isAuthenticated])
+
+  if (isAuthenticated === null) {
+    return <PageMessage title="Comprobando sesión" message="Un momento, estamos verificando tu acceso." />
+  }
+
+  if (!isAuthenticated) {
+    return <PageMessage title="Redirigiendo al login" message="Necesitas iniciar sesión para acceder a esta área." />
+  }
+
+  return <PrivateArea />
+}
+
+const PageMessage = ({ title, message }: { title: string; message: string }) => (
+  <div className="app-shell">
+    <SiteHeader />
+    <main className="message-page">
+      <p className="eyebrow">RealStatePortal</p>
+      <h1>{title}</h1>
+      <p className="intro-copy">{message}</p>
+    </main>
+    <Footer />
+  </div>
+)
+
+const PrivateArea = () => (
+  <div className="app-shell">
+    <SiteHeader />
+    <main className="area-page">
+      <p className="eyebrow">Área privada</p>
+      <h1>Tu espacio en el portal.</h1>
+      <p className="intro-copy">Esta zona está protegida y preparada para las próximas funciones de usuario.</p>
+    </main>
+    <Footer />
+  </div>
+)
 
 const Home = () => {
   const [search, setSearch] = useState('')
@@ -205,9 +271,10 @@ const SiteHeader = () => (
       <span>RealStatePortal</span>
     </a>
     <nav className="main-nav" aria-label="Navegacion principal">
-      <a href="/#properties">Propiedades</a>
-      <a href="/auth-test">Auth test</a>
-      <a href="/#contact">Contacto</a>
+      <Link to="/public#properties">Propiedades</Link>
+      <Link to="/private">Área privada</Link>
+      <Link to="/auth-test">Auth test</Link>
+      <a href="#contact">Contacto</a>
     </nav>
     <a className="login-link" href={`${apiUrl}/auth/login`}>Iniciar sesion</a>
   </header>
