@@ -1,5 +1,6 @@
 using RealStatePortal.Application.Abstractions.Authentication;
 using RealStatePortal.Application.Abstractions.Persistence;
+using RealStatePortal.Application.Abstractions.Storage;
 using RealStatePortal.Application.Abstractions.Time;
 using RealStatePortal.Application.Common;
 using RealStatePortal.Application.Properties.Dtos;
@@ -13,7 +14,8 @@ public sealed class PropertyService(
     IPropertyRepository propertyRepository,
     IUnitOfWork unitOfWork,
     ICurrentUserService currentUser,
-    IDateTimeProvider dateTimeProvider) : IPropertyService
+    IDateTimeProvider dateTimeProvider,
+    IImageStorage imageStorage) : IPropertyService
 {
     public async Task<Result<PropertyDto>> GetByIdAsync(Guid propertyId, CancellationToken cancellationToken = default)
     {
@@ -29,9 +31,20 @@ public sealed class PropertyService(
         return Result<IReadOnlyCollection<PropertyDto>>.Success(properties.Select(Map).ToArray());
     }
 
-    public async Task<Result<IReadOnlyCollection<PropertyDto>>> SearchAsync(string? query, CancellationToken cancellationToken = default)
+    public async Task<Result<IReadOnlyCollection<PropertyDto>>> GetMineAsync(CancellationToken cancellationToken = default)
     {
-        var properties = await propertyRepository.SearchAsync(query, cancellationToken);
+        if (!currentUser.UserId.HasValue)
+        {
+            return Result<IReadOnlyCollection<PropertyDto>>.Failure("Authentication is required.");
+        }
+
+        var properties = await propertyRepository.GetByBrokerIdAsync(currentUser.UserId.Value, cancellationToken);
+        return Result<IReadOnlyCollection<PropertyDto>>.Success(properties.Select(Map).ToArray());
+    }
+
+    public async Task<Result<IReadOnlyCollection<PropertyDto>>> SearchAsync(PropertySearchRequest request, CancellationToken cancellationToken = default)
+    {
+        var properties = await propertyRepository.SearchAsync(request, cancellationToken);
         return Result<IReadOnlyCollection<PropertyDto>>.Success(properties.Select(Map).ToArray());
     }
 
@@ -107,6 +120,69 @@ public sealed class PropertyService(
     public Task<Result> WithdrawAsync(Guid propertyId, CancellationToken cancellationToken = default) => ChangeStatusAsync(propertyId, (property, now) => property.Withdraw(now), cancellationToken);
     public Task<Result> MarkAsSoldAsync(Guid propertyId, CancellationToken cancellationToken = default) => ChangeStatusAsync(propertyId, (property, now) => property.MarkAsSold(now), cancellationToken);
     public Task<Result> DeleteAsync(Guid propertyId, CancellationToken cancellationToken = default) => ChangeStatusAsync(propertyId, (property, now) => property.Delete(now), cancellationToken);
+
+    public async Task<Result<PropertyDto>> AddImageAsync(Guid propertyId, Stream content, string fileName, string altText, bool isPrimary, CancellationToken cancellationToken = default)
+    {
+        var propertyResult = await GetOwnedPropertyAsync(propertyId, cancellationToken);
+        if (!propertyResult.IsSuccess)
+        {
+            return Result<PropertyDto>.Failure(propertyResult.Error!);
+        }
+
+        try
+        {
+            var property = propertyResult.Value!;
+            var url = await imageStorage.SaveAsync(content, fileName, cancellationToken);
+            property.AddImage(new PropertyImage(url, altText, property.Images.Count, isPrimary), dateTimeProvider.UtcNow);
+            await unitOfWork.SaveChangesAsync(cancellationToken);
+            return Result<PropertyDto>.Success(Map(property));
+        }
+        catch (Exception exception) when (exception is ArgumentException or DomainException)
+        {
+            return Result<PropertyDto>.Failure(exception.Message);
+        }
+    }
+
+    public async Task<Result> RemoveImageAsync(Guid propertyId, Guid imageId, CancellationToken cancellationToken = default)
+    {
+        var propertyResult = await GetOwnedPropertyAsync(propertyId, cancellationToken);
+        if (!propertyResult.IsSuccess)
+        {
+            return Result.Failure(propertyResult.Error!);
+        }
+
+        var property = propertyResult.Value!;
+        var image = property.Images.SingleOrDefault(candidate => candidate.Id == imageId);
+        if (image is null)
+        {
+            return Result.Failure("The property image was not found.");
+        }
+
+        property.RemoveImage(imageId, dateTimeProvider.UtcNow);
+        await imageStorage.DeleteAsync(image.Url, cancellationToken);
+        await unitOfWork.SaveChangesAsync(cancellationToken);
+        return Result.Success();
+    }
+
+    public async Task<Result> SetPrimaryImageAsync(Guid propertyId, Guid imageId, CancellationToken cancellationToken = default)
+    {
+        var propertyResult = await GetOwnedPropertyAsync(propertyId, cancellationToken);
+        if (!propertyResult.IsSuccess)
+        {
+            return Result.Failure(propertyResult.Error!);
+        }
+
+        try
+        {
+            propertyResult.Value!.SetPrimaryImage(imageId, dateTimeProvider.UtcNow);
+            await unitOfWork.SaveChangesAsync(cancellationToken);
+            return Result.Success();
+        }
+        catch (Exception exception) when (exception is ArgumentException or DomainException)
+        {
+            return Result.Failure(exception.Message);
+        }
+    }
 
     private async Task<Result> ChangeStatusAsync(Guid propertyId, Action<Property, DateTimeOffset> transition, CancellationToken cancellationToken)
     {

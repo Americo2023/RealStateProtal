@@ -1,0 +1,42 @@
+name: realstateportal
+
+services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_PID: Developer
+      MSSQL_SA_PASSWORD: ${MSSQL_SA_PASSWORD:?Set MSSQL_SA_PASSWORD externally}
+    volumes:
+      - sqlserver-data:/var/opt/mssql
+    restart: unless-stopped
+
+  api:
+    build:
+      context: .
+      dockerfile: src/RealStatePortal.Api/Dockerfile
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ASPNETCORE_URLS: http://+:8080
+      Frontend__BaseUrl: ${FRONTEND_BASE_URL:-http://localhost:5173}
+      ConnectionStrings__DefaultConnection: Server=sqlserver,1433;Database=RealStatePortal;User Id=sa;Password=${MSSQL_SA_PASSWORD};TrustServerCertificate=True
+    depends_on:
+      - sqlserver
+    ports:
+      - "5080:8080"
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        VITE_API_URL: ${VITE_API_URL:-http://localhost:5080}
+    depends_on:
+      - api
+    ports:
+      - "5173:80"
+    restart: unless-stopped
+
+volumes:
+  sqlserver-data:
+    name: realstateportal_sqlserver-data

@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using DotNetEnv;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authentication;
@@ -10,6 +11,22 @@ using RealStatePortal.Application.Abstractions.Authentication;
 using RealStatePortal.Application.Abstractions.Persistence;
 using RealStatePortal.Domain.Enums;
 using RealStatePortal.Infrastructure;
+
+var envFile = Path.Combine(Directory.GetCurrentDirectory(), ".env");
+if (File.Exists(envFile))
+{
+    Env.Load(envFile);
+}
+
+if (string.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable("ConnectionStrings__DefaultConnection"))
+    && !string.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable("MSSQL_SA_PASSWORD")))
+{
+    Environment.SetEnvironmentVariable(
+        "ConnectionStrings__DefaultConnection",
+        "Server=localhost,1433;Database=RealStatePortal;User Id=sa;Password="
+        + Environment.GetEnvironmentVariable("MSSQL_SA_PASSWORD")
+        + ";TrustServerCertificate=True;");
+}
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -30,7 +47,7 @@ builder.Services.AddCors(options =>
 builder.Services.AddAuthentication(options =>
     {
         options.DefaultScheme = "smart";
-        options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
     })
     .AddPolicyScheme("smart", "Bearer or cookie", options =>
     {
@@ -44,6 +61,28 @@ builder.Services.AddAuthentication(options =>
         options.Cookie.Name = "realstateportal.session";
         options.LoginPath = "/auth/login";
         options.LogoutPath = "/auth/logout";
+        options.Events.OnRedirectToLogin = context =>
+        {
+            if (context.Request.Path.StartsWithSegments("/api"))
+            {
+                context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                return Task.CompletedTask;
+            }
+
+            context.Response.Redirect(context.RedirectUri);
+            return Task.CompletedTask;
+        };
+        options.Events.OnRedirectToAccessDenied = context =>
+        {
+            if (context.Request.Path.StartsWithSegments("/api"))
+            {
+                context.Response.StatusCode = StatusCodes.Status403Forbidden;
+                return Task.CompletedTask;
+            }
+
+            context.Response.Redirect(context.RedirectUri);
+            return Task.CompletedTask;
+        };
     })
     .AddJwtBearer(options =>
     {

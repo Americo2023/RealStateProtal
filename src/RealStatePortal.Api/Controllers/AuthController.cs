@@ -18,7 +18,8 @@ public sealed class AuthController(ICurrentUserService currentUser, IConfigurati
     [AllowAnonymous]
     public IActionResult Login(string? returnUrl = "/")
     {
-        var redirectUri = Url.IsLocalUrl(returnUrl) ? returnUrl : "/";
+        var safeReturnUrl = Url.IsLocalUrl(returnUrl) ? returnUrl : "/";
+        var redirectUri = BuildFrontendUrl(safeReturnUrl);
         return Challenge(new AuthenticationProperties { RedirectUri = redirectUri }, OpenIdConnectDefaults.AuthenticationScheme);
     }
 
@@ -32,7 +33,7 @@ public sealed class AuthController(ICurrentUserService currentUser, IConfigurati
         var clientId = configuration["Auth0:ClientId"];
         if (string.IsNullOrWhiteSpace(authority) || string.IsNullOrWhiteSpace(clientId))
         {
-            return Redirect("/");
+            return Redirect(BuildFrontendUrl("/"));
         }
 
         var logoutUrl = QueryHelpers.AddQueryString(
@@ -40,7 +41,7 @@ public sealed class AuthController(ICurrentUserService currentUser, IConfigurati
             new Dictionary<string, string?>
             {
                 ["client_id"] = clientId,
-                ["returnTo"] = $"{Request.Scheme}://{Request.Host}/"
+                ["returnTo"] = BuildFrontendUrl("/")
             });
 
         return Redirect(logoutUrl);
@@ -58,5 +59,12 @@ public sealed class AuthController(ICurrentUserService currentUser, IConfigurati
             currentUser.Auth0UserId,
             currentUser.Roles
         });
+    }
+
+    private string BuildFrontendUrl(string path)
+    {
+        var frontendBaseUrl = configuration["Frontend:BaseUrl"]?.TrimEnd('/')
+            ?? "http://localhost:5173";
+        return $"{frontendBaseUrl}{path}";
     }
 }

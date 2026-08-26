@@ -288,7 +288,11 @@ frontend/
 ```
 
 El frontend utiliza React, TypeScript, Vite, React Router y React Context. Las
-features deben organizar el código por capacidad de negocio. La integración de
+features deben organizar el código por capacidad de negocio. La implementación
+actual separa la composición de la aplicación en `app/`, los contratos y el
+cliente HTTP en `types/` y `services/`, el chrome compartido y formularios en
+`components/`, y las pantallas de catálogo, detalle, autenticación y portal de
+broker en `features/`. La integración de
 mapas debe depender de `MapProvider`, permitiendo sustituir Leaflet por Google
 Maps en el futuro.
 
@@ -329,9 +333,14 @@ identidad.
 5. API Layer
 6. Auth0 Integration
 7. Frontend
-8. Search
-9. Favorites
-10. Deployment
+8. Authentication Validation
+9. Navigation & Areas
+10. Broker Portal
+11. Administration
+12. Public Catalog
+13. Favorites
+14. Search
+15. Deployment
 
 La implementación debe mantener `main` estable y desarrollar cada fase en su
 branch correspondiente según la estrategia definida en la especificación.

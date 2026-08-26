@@ -1,4 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
+using RealStatePortal.Application.Auditing;
 using RealStatePortal.Application.ContactInquiries;
 using RealStatePortal.Application.Favorites;
 using RealStatePortal.Application.Properties.Services;
@@ -16,6 +17,7 @@ public static class DependencyInjection
         services.AddScoped<IContactInquiryService, ContactInquiryService>();
         services.AddScoped<IIdentityProvisioningService, IdentityProvisioningService>();
         services.AddScoped<IUserService, UserService>();
+        services.AddScoped<IAuditLogService, AuditLogService>();
         return services;
     }
 }

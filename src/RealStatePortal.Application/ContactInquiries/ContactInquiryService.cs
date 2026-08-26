@@ -1,4 +1,5 @@
 using RealStatePortal.Application.Abstractions.Email;
+using RealStatePortal.Application.Abstractions.Authentication;
 using RealStatePortal.Application.Abstractions.Persistence;
 using RealStatePortal.Application.Abstractions.Time;
 using RealStatePortal.Application.Common;
@@ -12,8 +13,20 @@ public sealed class ContactInquiryService(
     IContactInquiryRepository inquiryRepository,
     IEmailSender emailSender,
     IUnitOfWork unitOfWork,
-    IDateTimeProvider dateTimeProvider) : IContactInquiryService
+    IDateTimeProvider dateTimeProvider,
+    ICurrentUserService currentUser) : IContactInquiryService
 {
+    public async Task<Result<IReadOnlyCollection<ContactInquiryDto>>> GetMineAsync(CancellationToken cancellationToken = default)
+    {
+        if (!currentUser.UserId.HasValue)
+        {
+            return Result<IReadOnlyCollection<ContactInquiryDto>>.Failure("Authentication is required.");
+        }
+
+        var inquiries = await inquiryRepository.GetByBrokerIdAsync(currentUser.UserId.Value, cancellationToken);
+        return Result<IReadOnlyCollection<ContactInquiryDto>>.Success(inquiries);
+    }
+
     public async Task<Result> CreateAsync(CreateContactInquiryRequest request, CancellationToken cancellationToken = default)
     {
         var property = await propertyRepository.GetByIdAsync(request.PropertyId, cancellationToken);
