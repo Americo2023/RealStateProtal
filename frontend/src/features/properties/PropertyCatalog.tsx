@@ -3,11 +3,15 @@ import { Link } from "react-router-dom";
 import { Footer, SiteHeader } from "../../components/common/SiteChrome";
 import { favoritesApi, propertiesApi } from "../../services/apiClient";
 import type { ApiProperty, PropertyCard } from "../../types/api";
+import { PropertyMap } from "./PropertyMap";
+
+type CatalogView = "list" | "map";
 
 export const PropertyCatalog = () => {
   const [search, setSearch] = useState("");
   const [properties, setProperties] = useState<PropertyCard[]>([]);
   const [favoriteIds, setFavoriteIds] = useState<string[]>([]);
+  const [view, setView] = useState<CatalogView>("list");
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -29,6 +33,8 @@ export const PropertyCatalog = () => {
               property.images[0]?.url ??
               "",
             status: property.status,
+            latitude: property.address?.latitude,
+            longitude: property.address?.longitude,
           })),
         ),
       )
@@ -99,7 +105,23 @@ export const PropertyCatalog = () => {
             </div>
             <span className="result-count">{properties.length} resultados</span>
           </div>
-          <div className="property-grid">
+          <div className="catalog-view-toggle" aria-label="Vista del catálogo">
+            <button
+              className={view === "list" ? "active" : ""}
+              type="button"
+              onClick={() => setView("list")}
+            >
+              Lista
+            </button>
+            <button
+              className={view === "map" ? "active" : ""}
+              type="button"
+              onClick={() => setView("map")}
+            >
+              Mapa
+            </button>
+          </div>
+          {view === "list" && <div className="property-grid">
             {properties.map((property) => (
               <article className="property-card" key={property.id}>
                 {property.image && (
@@ -129,7 +151,16 @@ export const PropertyCatalog = () => {
                 </div>
               </article>
             ))}
-          </div>
+          </div>}
+          {view === "map" && (
+            <PropertyMap
+              locations={properties.flatMap((property) =>
+                property.latitude !== undefined && property.longitude !== undefined
+                  ? [{ latitude: property.latitude, longitude: property.longitude, title: property.title }]
+                  : [],
+              )}
+            />
+          )}
           {isLoading && <p className="empty-state">Cargando catálogo...</p>}
           {error && <p className="error-message">{error}</p>}
           {!isLoading && !error && properties.length === 0 && (
