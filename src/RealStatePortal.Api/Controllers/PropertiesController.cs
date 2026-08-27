@@ -11,12 +11,22 @@ public sealed class PropertiesController(IPropertyService propertyService) : Api
     [HttpGet]
     public async Task<IActionResult> GetPublished(
         [FromQuery] string? query,
+        [FromQuery] PropertySearchRequest request,
         CancellationToken cancellationToken)
     {
-        var result = string.IsNullOrWhiteSpace(query)
+        var searchRequest = request with { Query = query ?? request.Query };
+        var result = string.IsNullOrWhiteSpace(query) && request with { } == new PropertySearchRequest(null, null, null, null, null, null, null, null, null, null)
             ? await propertyService.GetPublishedAsync(cancellationToken)
-            : await propertyService.SearchAsync(query, cancellationToken);
+            : await propertyService.SearchAsync(searchRequest, cancellationToken);
 
+        return FromResult(result);
+    }
+
+    [HttpGet("mine")]
+    [Authorize(Policy = "BrokerOrAdministrator")]
+    public async Task<IActionResult> GetMine(CancellationToken cancellationToken)
+    {
+        var result = await propertyService.GetMineAsync(cancellationToken);
         return FromResult(result);
     }
 
@@ -69,6 +79,30 @@ public sealed class PropertiesController(IPropertyService propertyService) : Api
     [Authorize(Policy = "BrokerOrAdministrator")]
     public Task<IActionResult> Delete(Guid propertyId, CancellationToken cancellationToken) => ChangeStatus(
         () => propertyService.DeleteAsync(propertyId, cancellationToken));
+
+    [HttpPost("{propertyId:guid}/images")]
+    [Authorize(Policy = "BrokerOrAdministrator")]
+    public async Task<IActionResult> AddImage(Guid propertyId, IFormFile file, [FromForm] string altText, [FromForm] bool isPrimary, CancellationToken cancellationToken)
+    {
+        if (file.Length == 0)
+        {
+            return BadRequest(new ProblemDetails { Detail = "An image file is required." });
+        }
+
+        await using var content = file.OpenReadStream();
+        var result = await propertyService.AddImageAsync(propertyId, content, file.FileName, altText, isPrimary, cancellationToken);
+        return FromResult(result);
+    }
+
+    [HttpDelete("{propertyId:guid}/images/{imageId:guid}")]
+    [Authorize(Policy = "BrokerOrAdministrator")]
+    public async Task<IActionResult> RemoveImage(Guid propertyId, Guid imageId, CancellationToken cancellationToken) =>
+        FromResult(await propertyService.RemoveImageAsync(propertyId, imageId, cancellationToken));
+
+    [HttpPost("{propertyId:guid}/images/{imageId:guid}/primary")]
+    [Authorize(Policy = "BrokerOrAdministrator")]
+    public async Task<IActionResult> SetPrimaryImage(Guid propertyId, Guid imageId, CancellationToken cancellationToken) =>
+        FromResult(await propertyService.SetPrimaryImageAsync(propertyId, imageId, cancellationToken));
 
     private async Task<IActionResult> ChangeStatus(Func<Task<RealStatePortal.Application.Common.Result>> operation)
     {

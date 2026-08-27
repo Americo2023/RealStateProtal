@@ -7,11 +7,15 @@ public interface IPropertyService
 {
     Task<Result<PropertyDto>> GetByIdAsync(Guid propertyId, CancellationToken cancellationToken = default);
     Task<Result<IReadOnlyCollection<PropertyDto>>> GetPublishedAsync(CancellationToken cancellationToken = default);
-    Task<Result<IReadOnlyCollection<PropertyDto>>> SearchAsync(string? query, CancellationToken cancellationToken = default);
+    Task<Result<IReadOnlyCollection<PropertyDto>>> GetMineAsync(CancellationToken cancellationToken = default);
+    Task<Result<IReadOnlyCollection<PropertyDto>>> SearchAsync(PropertySearchRequest request, CancellationToken cancellationToken = default);
     Task<Result<PropertyDto>> CreateAsync(CreatePropertyRequest request, CancellationToken cancellationToken = default);
     Task<Result> UpdateAsync(Guid propertyId, UpdatePropertyRequest request, CancellationToken cancellationToken = default);
     Task<Result> PublishAsync(Guid propertyId, CancellationToken cancellationToken = default);
     Task<Result> WithdrawAsync(Guid propertyId, CancellationToken cancellationToken = default);
     Task<Result> MarkAsSoldAsync(Guid propertyId, CancellationToken cancellationToken = default);
     Task<Result> DeleteAsync(Guid propertyId, CancellationToken cancellationToken = default);
+    Task<Result<PropertyDto>> AddImageAsync(Guid propertyId, Stream content, string fileName, string altText, bool isPrimary, CancellationToken cancellationToken = default);
+    Task<Result> RemoveImageAsync(Guid propertyId, Guid imageId, CancellationToken cancellationToken = default);
+    Task<Result> SetPrimaryImageAsync(Guid propertyId, Guid imageId, CancellationToken cancellationToken = default);
 }

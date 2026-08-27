@@ -109,6 +109,8 @@ Todo el código frontend debe ser:
 - Fuertemente tipado.
 - Listo para producción.
 - Fácil de mantener.
+- Formateado de manera clara y legible; no escribir componentes, funciones,
+  objetos ni expresiones complejas en una sola línea.
 
 ### TypeScript
 
