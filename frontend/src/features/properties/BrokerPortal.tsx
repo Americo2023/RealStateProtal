@@ -5,8 +5,11 @@ import {
   PageMessage,
   SiteHeader,
 } from "../../components/common/SiteChrome";
-import { inquiriesApi, propertiesApi } from "../../services/apiClient";
-import type { ApiProperty, AuthUser, ContactInquiry } from "../../types/api";
+import { inquiriesApi } from "../../services/inquiriesApi";
+import { propertiesApi } from "../../services/propertiesApi";
+import type { ApiProperty } from "../../types/ApiProperty";
+import type { AuthUser } from "../../types/AuthUser";
+import type { ContactInquiry } from "../../types/ContactInquiry";
 
 export const BrokerPortal = () => {
   const [properties, setProperties] = useState<ApiProperty[]>([]);

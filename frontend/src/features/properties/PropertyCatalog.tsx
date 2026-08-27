@@ -1,12 +1,11 @@
 import { useEffect, useState, type FormEvent } from "react";
 import { Link } from "react-router-dom";
+import { useFavorites } from "../../app/FavoritesContext";
 import { Footer, SiteHeader } from "../../components/common/SiteChrome";
-import { favoritesApi, propertiesApi } from "../../services/apiClient";
-import type {
-  ApiProperty,
-  PropertyCard,
-  PropertySearchCriteria,
-} from "../../types/api";
+import { propertiesApi } from "../../services/propertiesApi";
+import type { ApiProperty } from "../../types/ApiProperty";
+import type { PropertyCard } from "../../types/PropertyCard";
+import type { PropertySearchCriteria } from "../../types/PropertySearchCriteria";
 import { PropertyMap } from "./PropertyMap";
 
 type CatalogView = "list" | "map";
@@ -18,10 +17,10 @@ export const PropertyCatalog = () => {
     sort: "Newest",
   });
   const [properties, setProperties] = useState<PropertyCard[]>([]);
-  const [favoriteIds, setFavoriteIds] = useState<string[]>([]);
   const [view, setView] = useState<CatalogView>("list");
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const { favoriteIds, error: favoritesError, toggleFavorite } = useFavorites();
 
   useEffect(() => {
     void propertiesApi
@@ -61,28 +60,6 @@ export const PropertyCatalog = () => {
   const clearSearch = () => {
     setSearch("");
     setCriteria({ sort: "Newest" });
-  };
-
-  useEffect(() => {
-    void favoritesApi
-      .getMine()
-      .then((favorites) =>
-        setFavoriteIds(favorites.map((favorite) => favorite.property.id)),
-      )
-      .catch(() => undefined);
-  }, []);
-  const toggleFavorite = async (propertyId: string) => {
-    const isFavorite = favoriteIds.includes(propertyId);
-    try {
-      await favoritesApi.toggle(propertyId, isFavorite);
-      setFavoriteIds((current) =>
-        isFavorite
-          ? current.filter((id) => id !== propertyId)
-          : [...current, propertyId],
-      );
-    } catch {
-      setError("No se pudo actualizar el favorito.");
-    }
   };
 
   return (
@@ -269,7 +246,9 @@ export const PropertyCatalog = () => {
             />
           )}
           {isLoading && <p className="empty-state">Cargando catálogo...</p>}
-          {error && <p className="error-message">{error}</p>}
+          {(error || favoritesError) && (
+            <p className="error-message">{error ?? favoritesError}</p>
+          )}
           {!isLoading && !error && properties.length === 0 && (
             <p className="empty-state">
               No encontramos propiedades para esa búsqueda.

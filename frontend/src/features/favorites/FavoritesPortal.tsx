@@ -1,36 +1,14 @@
-import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { useFavorites } from "../../app/FavoritesContext";
 import { Footer, PageMessage, SiteHeader } from "../../components/common/SiteChrome";
-import { favoritesApi } from "../../services/apiClient";
-import type { AuthUser, Favorite } from "../../types/api";
+import type { AuthUser } from "../../types/AuthUser";
 
 type FavoritesPortalProps = {
   user: AuthUser;
 };
 
 export const FavoritesPortal = ({ user }: FavoritesPortalProps) => {
-  const [favorites, setFavorites] = useState<Favorite[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    void favoritesApi
-      .getMine()
-      .then(setFavorites)
-      .catch(() => setError("No se pudieron cargar tus favoritos."))
-      .finally(() => setIsLoading(false));
-  }, []);
-
-  const removeFavorite = async (propertyId: string) => {
-    try {
-      await favoritesApi.toggle(propertyId, true);
-      setFavorites((current) =>
-        current.filter((favorite) => favorite.property.id !== propertyId),
-      );
-    } catch {
-      setError("No se pudo quitar el favorito.");
-    }
-  };
+  const { favorites, isLoading, error, removeFavorite } = useFavorites();
 
   if (!user.roles.some((role) =>
     ["Registered User", "RegisteredUser", "Broker", "Administrator"].includes(role),

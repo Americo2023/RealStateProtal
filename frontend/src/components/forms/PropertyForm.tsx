@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { propertiesApi } from "../../services/apiClient";
-import type { ApiProperty, PropertyFormData } from "../../types/api";
+import { propertiesApi } from "../../services/propertiesApi";
+import type { ApiProperty } from "../../types/ApiProperty";
+import type { PropertyFormData } from "../../types/PropertyFormData";
 
 const emptyPropertyForm: PropertyFormData = {
   referenceNumber: "",

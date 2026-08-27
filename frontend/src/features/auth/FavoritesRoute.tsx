@@ -1,20 +1,11 @@
-import { useEffect, useState } from "react";
-import { apiUrl, authApi } from "../../services/apiClient";
+import { useEffect } from "react";
+import { apiUrl } from "../../services/apiClient";
+import { useAuth } from "../../app/AuthContext";
 import { PageMessage } from "../../components/common/SiteChrome";
 import { FavoritesPortal } from "../favorites/FavoritesPortal";
-import type { AuthUser } from "../../types/api";
 
 export const FavoritesRoute = () => {
-  const [user, setUser] = useState<AuthUser | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    void authApi
-      .getCurrentUser()
-      .then(setUser)
-      .catch(() => setUser(null))
-      .finally(() => setIsLoading(false));
-  }, []);
+  const { user, isLoading } = useAuth();
 
   useEffect(() => {
     if (!isLoading && !user) {
