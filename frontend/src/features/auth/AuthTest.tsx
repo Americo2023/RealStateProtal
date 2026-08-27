@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
-import { apiUrl, authApi } from "../../services/apiClient";
+import { apiUrl } from "../../services/apiClient";
+import { authApi } from "../../services/authApi";
 import { Footer, SiteHeader } from "../../components/common/SiteChrome";
-import type { AuthUser } from "../../types/api";
+import type { AuthUser } from "../../types/AuthUser";
 
 export const AuthTest = () => {
   const [user, setUser] = useState<AuthUser | null>(null);

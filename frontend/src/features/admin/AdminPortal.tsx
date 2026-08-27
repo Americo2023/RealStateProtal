@@ -1,7 +1,10 @@
 import { useEffect, useState, type FormEvent } from "react";
 import { Footer, PageMessage, SiteHeader } from "../../components/common/SiteChrome";
-import { adminApi } from "../../services/apiClient";
-import type { AdminUser, AuditLog, Broker, PropertyCard } from "../../types/api";
+import { adminApi } from "../../services/adminApi";
+import type { AdminUser } from "../../types/AdminUser";
+import type { AuditLog } from "../../types/AuditLog";
+import type { Broker } from "../../types/Broker";
+import type { PropertyCard } from "../../types/PropertyCard";
 
 const roles = ["Visitor", "Registered User", "Broker", "Administrator"];
 

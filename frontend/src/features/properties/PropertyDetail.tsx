@@ -6,8 +6,10 @@ import {
   PageMessage,
   SiteHeader,
 } from "../../components/common/SiteChrome";
-import { inquiriesApi, propertiesApi } from "../../services/apiClient";
-import type { ApiProperty, ContactInquiryFormData } from "../../types/api";
+import { inquiriesApi } from "../../services/inquiriesApi";
+import { propertiesApi } from "../../services/propertiesApi";
+import type { ApiProperty } from "../../types/ApiProperty";
+import type { ContactInquiryFormData } from "../../types/ContactInquiryFormData";
 import { PropertyMap } from "./PropertyMap";
 
 export const PropertyDetail = () => {
