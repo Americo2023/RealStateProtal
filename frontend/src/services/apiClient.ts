@@ -84,7 +84,7 @@ export const inquiriesApi = {
 
 export const favoritesApi = {
   getMine: () =>
-    request<Array<{ property: { id: string } }>>("/api/favorites", {
+    request<import("../types/api").Favorite[]>("/api/favorites", {
       credentials: "include",
     }),
   toggle: (propertyId: string, isFavorite: boolean) =>
