@@ -24,7 +24,9 @@ a {
 }
 
 button,
-input {
+input,
+select,
+textarea {
   font: inherit;
 }
 
@@ -248,6 +250,49 @@ input {
 input:focus {
   border-color: var(--accent);
   outline: 2px solid #f5c2b4;
+}
+
+select {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  color: var(--ink);
+  min-width: 0;
+  padding: 13px 14px;
+  width: 100%;
+}
+
+.advanced-toggle {
+  background: transparent;
+  color: var(--accent-dark);
+  margin-top: 18px;
+  padding: 0;
+}
+
+.advanced-toggle:hover {
+  background: transparent;
+  color: var(--ink);
+}
+
+.advanced-search-grid {
+  border-top: 1px solid var(--line);
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(3, 1fr);
+  margin-top: 22px;
+  padding-top: 22px;
+}
+
+.advanced-search-grid label {
+  display: grid;
+  font-size: 0.78rem;
+  font-weight: 700;
+  gap: 7px;
+}
+
+.advanced-search-grid button {
+  align-self: end;
+  min-height: 45px;
 }
 
 button {
@@ -973,6 +1018,10 @@ footer {
   main,
   footer {
     width: min(100% - 32px, 560px);
+  }
+
+  .advanced-search-grid {
+    grid-template-columns: 1fr;
   }
 
   .site-header {

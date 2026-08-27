@@ -1,14 +1,22 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import { Link } from "react-router-dom";
 import { Footer, SiteHeader } from "../../components/common/SiteChrome";
 import { favoritesApi, propertiesApi } from "../../services/apiClient";
-import type { ApiProperty, PropertyCard } from "../../types/api";
+import type {
+  ApiProperty,
+  PropertyCard,
+  PropertySearchCriteria,
+} from "../../types/api";
 import { PropertyMap } from "./PropertyMap";
 
 type CatalogView = "list" | "map";
 
 export const PropertyCatalog = () => {
   const [search, setSearch] = useState("");
+  const [showAdvanced, setShowAdvanced] = useState(false);
+  const [criteria, setCriteria] = useState<PropertySearchCriteria>({
+    sort: "Newest",
+  });
   const [properties, setProperties] = useState<PropertyCard[]>([]);
   const [favoriteIds, setFavoriteIds] = useState<string[]>([]);
   const [view, setView] = useState<CatalogView>("list");
@@ -17,7 +25,7 @@ export const PropertyCatalog = () => {
 
   useEffect(() => {
     void propertiesApi
-      .getPublished(search.trim())
+      .search(criteria)
       .then((result: ApiProperty[]) =>
         setProperties(
           result.map((property) => ({
@@ -40,7 +48,20 @@ export const PropertyCatalog = () => {
       )
       .catch(() => setError("No se pudo cargar el catálogo."))
       .finally(() => setIsLoading(false));
-  }, [search]);
+  }, [criteria]);
+
+  const submitSearch = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setCriteria((current) => ({
+      ...current,
+      query: search.trim() || undefined,
+    }));
+  };
+
+  const clearSearch = () => {
+    setSearch("");
+    setCriteria({ sort: "Newest" });
+  };
 
   useEffect(() => {
     void favoritesApi
@@ -82,8 +103,8 @@ export const PropertyCatalog = () => {
             <span>Propiedades verificadas por nuestro equipo.</span>
           </div>
         </section>
-        <section className="search-panel" aria-label="Buscar propiedades">
-          <label htmlFor="property-search">Buscar por ciudad o zona</label>
+        <form className="search-panel" onSubmit={submitSearch}>
+          <label htmlFor="property-search">Buscar propiedades</label>
           <div className="search-row">
             <input
               id="property-search"
@@ -92,11 +113,97 @@ export const PropertyCatalog = () => {
               value={search}
               onChange={(event) => setSearch(event.target.value)}
             />
-            <button type="button" onClick={() => setSearch("")}>
+            <button type="submit">Buscar</button>
+            <button type="button" onClick={clearSearch}>
               Limpiar
             </button>
           </div>
-        </section>
+          <button
+            className="advanced-toggle"
+            type="button"
+            onClick={() => setShowAdvanced((current) => !current)}
+          >
+            {showAdvanced ? "Ocultar filtros" : "Búsqueda avanzada"}
+          </button>
+          {showAdvanced && (
+            <div className="advanced-search-grid">
+              <label>
+                Ciudad
+                <input
+                  value={criteria.city ?? ""}
+                  onChange={(event) =>
+                    setCriteria({ ...criteria, city: event.target.value })
+                  }
+                />
+              </label>
+              <label>
+                Tipo
+                <select
+                  value={criteria.propertyType ?? ""}
+                  onChange={(event) =>
+                    setCriteria({
+                      ...criteria,
+                      propertyType: event.target.value
+                        ? Number(event.target.value)
+                        : undefined,
+                    })
+                  }
+                >
+                  <option value="">Todos</option>
+                  <option value="0">Casa</option>
+                  <option value="1">Apartamento</option>
+                  <option value="2">Terreno</option>
+                  <option value="3">Comercial</option>
+                  <option value="4">Oficina</option>
+                  <option value="5">Otro</option>
+                </select>
+              </label>
+              {[
+                ["priceMin", "Precio mínimo"],
+                ["priceMax", "Precio máximo"],
+                ["bedroomsMin", "Habitaciones mínimas"],
+                ["bathroomsMin", "Baños mínimos"],
+                ["areaMin", "Área mínima (m²)"],
+                ["areaMax", "Área máxima (m²)"],
+              ].map(([field, label]) => (
+                <label key={field}>
+                  {label}
+                  <input
+                    min="0"
+                    type="number"
+                    value={criteria[field as keyof PropertySearchCriteria] ?? ""}
+                    onChange={(event) =>
+                      setCriteria({
+                        ...criteria,
+                        [field]: event.target.value
+                          ? Number(event.target.value)
+                          : undefined,
+                      })
+                    }
+                  />
+                </label>
+              ))}
+              <label>
+                Ordenar por
+                <select
+                  value={criteria.sort ?? "Newest"}
+                  onChange={(event) =>
+                    setCriteria({
+                      ...criteria,
+                      sort: event.target.value as PropertySearchCriteria["sort"],
+                    })
+                  }
+                >
+                  <option value="Newest">Más recientes</option>
+                  <option value="Oldest">Más antiguas</option>
+                  <option value="PriceLowToHigh">Precio menor</option>
+                  <option value="PriceHighToLow">Precio mayor</option>
+                </select>
+              </label>
+              <button type="submit">Aplicar filtros</button>
+            </div>
+          )}
+        </form>
         <section className="property-section" id="properties">
           <div className="section-heading">
             <div>

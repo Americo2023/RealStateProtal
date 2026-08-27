@@ -16,6 +16,18 @@ export const authApi = {
 };
 
 export const propertiesApi = {
+  search: (criteria: import("../types/api").PropertySearchCriteria) => {
+    const params = new URLSearchParams();
+    Object.entries(criteria).forEach(([key, value]) => {
+      if (value !== undefined && value !== "") {
+        params.set(key, String(value));
+      }
+    });
+    const query = params.toString();
+    return request<import("../types/api").ApiProperty[]>(
+      `/api/properties${query ? `?${query}` : ""}`,
+    );
+  },
   getPublished: (query?: string) =>
     request<import("../types/api").ApiProperty[]>(
       query
