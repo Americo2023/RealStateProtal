@@ -6,6 +6,8 @@ export interface PropertyCard {
   details: string;
   image: string;
   status?: string;
+  latitude?: number;
+  longitude?: number;
 }
 
 export interface PropertyImage {
@@ -33,7 +35,16 @@ export interface ApiProperty {
   constructionYear: number | null;
   energyClass: number;
   status: string;
-  address: { city: string; region: string } | null;
+  address: {
+    street: string;
+    streetNumber: string;
+    postalCode: string;
+    city: string;
+    region: string;
+    country: string;
+    latitude: number;
+    longitude: number;
+  } | null;
   images: PropertyImage[];
 }
 

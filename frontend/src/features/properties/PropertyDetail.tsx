@@ -8,11 +8,14 @@ import {
 } from "../../components/common/SiteChrome";
 import { inquiriesApi, propertiesApi } from "../../services/apiClient";
 import type { ApiProperty, ContactInquiryFormData } from "../../types/api";
+import { PropertyMap } from "./PropertyMap";
 
 export const PropertyDetail = () => {
   const { propertyId } = useParams();
   const [property, setProperty] = useState<ApiProperty | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
+  const [submitError, setSubmitError] = useState(false);
   const [sent, setSent] = useState(false);
   const {
     register,
@@ -25,13 +28,19 @@ export const PropertyDetail = () => {
     void propertiesApi
       .getById(propertyId)
       .then(setProperty)
+      .catch(() => setLoadError(true))
       .finally(() => setIsLoading(false));
   }, [propertyId]);
 
   const submitInquiry = async (data: ContactInquiryFormData) => {
     if (!propertyId) return;
-    await inquiriesApi.create(propertyId, data);
-    setSent(true);
+    try {
+      setSubmitError(false);
+      await inquiriesApi.create(propertyId, data);
+      setSent(true);
+    } catch {
+      setSubmitError(true);
+    }
   };
 
   if (isLoading)
@@ -45,7 +54,11 @@ export const PropertyDetail = () => {
     return (
       <PageMessage
         title="Propiedad no encontrada"
-        message="Esta propiedad no está disponible."
+        message={
+          loadError
+            ? "No se pudieron cargar los detalles de esta propiedad."
+            : "Esta propiedad no está disponible."
+        }
       />
     );
   const image =
@@ -80,6 +93,23 @@ export const PropertyDetail = () => {
               {property.bedrooms} habitaciones · {property.bathrooms} baños ·{" "}
               {property.livingArea} m2
             </p>
+            {property.address && (
+              <address className="detail-address">
+                {property.address.street} {property.address.streetNumber},{" "}
+                {property.address.postalCode} {property.address.city},{" "}
+                {property.address.region}
+              </address>
+            )}
+            {property.address && (
+              <section className="map-section" aria-label="Ubicación de la propiedad">
+                <p className="eyebrow">Ubicación</p>
+                <PropertyMap
+                  latitude={property.address.latitude}
+                  longitude={property.address.longitude}
+                  title={property.title}
+                />
+              </section>
+            )}
           </article>
           <section className="contact-panel">
             <p className="eyebrow">Contacto</p>
@@ -108,6 +138,11 @@ export const PropertyDetail = () => {
                   errors.message) && (
                   <p className="error-message">
                     Completa los campos obligatorios.
+                  </p>
+                )}
+                {submitError && (
+                  <p className="error-message">
+                    No se pudo enviar la consulta. Inténtalo de nuevo.
                   </p>
                 )}
                 <button type="submit">Contactar al broker</button>

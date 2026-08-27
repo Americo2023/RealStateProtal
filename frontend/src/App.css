@@ -701,6 +701,35 @@ button:disabled {
   margin-bottom: 28px;
 }
 
+.detail-address {
+  color: var(--muted);
+  font-size: 0.95rem;
+  font-style: normal;
+  margin: 24px 0;
+}
+
+.map-section {
+  margin-top: 36px;
+}
+
+.property-map {
+  border: 1px solid var(--line);
+  height: 300px;
+  overflow: hidden;
+  width: 100%;
+}
+
+.catalog-view-toggle {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 18px;
+}
+
+.catalog-view-toggle button.active {
+  background: var(--ink);
+  color: var(--surface);
+}
+
 .detail-specs {
   border-top: 1px solid var(--line);
   color: var(--muted);
