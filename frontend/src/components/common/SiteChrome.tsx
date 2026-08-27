@@ -10,6 +10,7 @@ export const SiteHeader = () => (
     <nav className="main-nav" aria-label="Navegacion principal">
       <Link to="/public#properties">Propiedades</Link>
       <Link to="/private">Área privada</Link>
+      <Link to="/favorites">Favoritos</Link>
       <Link to="/auth-test">Auth test</Link>
       <a href="#contact">Contacto</a>
     </nav>

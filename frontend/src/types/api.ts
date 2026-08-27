@@ -121,3 +121,9 @@ export interface ContactInquiryFormData {
   visitorPhone: string;
   message: string;
 }
+
+export interface Favorite {
+  id: string;
+  createdAt: string;
+  property: ApiProperty;
+}
