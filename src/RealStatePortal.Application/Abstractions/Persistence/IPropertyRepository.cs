@@ -9,6 +9,7 @@ public interface IPropertyRepository
     Task<bool> ExistsByReferenceNumberAsync(string referenceNumber, CancellationToken cancellationToken = default);
     Task AddAsync(Property aggregate, CancellationToken cancellationToken = default);
     Task<IReadOnlyCollection<Property>> GetPublishedAsync(CancellationToken cancellationToken = default);
+    Task<IReadOnlyCollection<Property>> GetAllAsync(CancellationToken cancellationToken = default);
     Task<IReadOnlyCollection<Property>> GetByBrokerIdAsync(Guid brokerId, CancellationToken cancellationToken = default);
     Task<IReadOnlyCollection<Property>> SearchAsync(PropertySearchRequest request, CancellationToken cancellationToken = default);
 }

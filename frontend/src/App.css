@@ -457,6 +457,35 @@ h3 {
   padding-top: 0;
 }
 
+.admin-modal {
+  display: grid;
+  gap: 16px;
+  max-width: 560px;
+}
+
+.admin-modal label {
+  display: grid;
+  gap: 6px;
+}
+
+.admin-modal input,
+.admin-modal textarea {
+  border: 1px solid var(--line);
+  padding: 10px 12px;
+}
+
+.admin-modal textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+.admin-modal .modal-heading,
+.admin-modal .modal-actions {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+}
+
 .modal-close {
   align-items: center;
   background: transparent;
@@ -533,6 +562,72 @@ h3 {
   border-top: 1px solid var(--line);
   margin-top: 48px;
   padding-top: 36px;
+}
+
+.admin-page {
+  padding-bottom: 72px;
+}
+
+.admin-tabs {
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  gap: 8px;
+  margin: 12px 0 28px;
+  overflow-x: auto;
+}
+
+.admin-tabs button {
+  background: transparent;
+  border-bottom: 3px solid transparent;
+  border-radius: 0;
+  color: var(--muted);
+  padding: 12px 14px;
+  white-space: nowrap;
+}
+
+.admin-tabs button:hover,
+.admin-tabs button.active {
+  background: var(--sage);
+  border-bottom-color: var(--accent);
+  color: var(--ink);
+}
+
+.admin-list {
+  display: grid;
+  gap: 8px;
+}
+
+.admin-row {
+  align-items: center;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  display: grid;
+  gap: 18px;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  padding: 16px 18px;
+}
+
+.admin-row div {
+  display: grid;
+  gap: 5px;
+}
+
+.admin-row span,
+.admin-row time {
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+.admin-row select {
+  border: 1px solid var(--line);
+  color: var(--ink);
+  padding: 8px;
+}
+
+.toggle-label {
+  color: var(--muted);
+  font-size: 0.82rem;
+  white-space: nowrap;
 }
 
 .inquiry-list {
@@ -871,6 +966,11 @@ footer {
   }
 
   .inquiry-row {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-row {
+    align-items: start;
     grid-template-columns: 1fr;
   }
 

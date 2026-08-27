@@ -6,6 +6,9 @@ namespace RealStatePortal.Infrastructure.Persistence.Repositories;
 
 public sealed class AuditLogRepository(RealStatePortalDbContext dbContext) : IAuditLogRepository
 {
+    public Task AddAsync(AuditLog auditLog, CancellationToken cancellationToken = default) =>
+        dbContext.AuditLogs.AddAsync(auditLog, cancellationToken).AsTask();
+
     public async Task<IReadOnlyCollection<AuditLog>> GetAllAsync(CancellationToken cancellationToken = default) =>
         await dbContext.AuditLogs
             .AsNoTracking()

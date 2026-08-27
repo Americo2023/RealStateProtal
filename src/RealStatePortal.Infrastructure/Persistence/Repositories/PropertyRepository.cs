@@ -24,6 +24,11 @@ public sealed class PropertyRepository(RealStatePortalDbContext dbContext) : IPr
             .OrderByDescending(property => property.PublishedAt)
             .ToArrayAsync(cancellationToken);
 
+    public async Task<IReadOnlyCollection<Property>> GetAllAsync(CancellationToken cancellationToken = default) =>
+        await Query()
+            .OrderByDescending(property => property.UpdatedAt)
+            .ToArrayAsync(cancellationToken);
+
     public async Task<IReadOnlyCollection<Property>> GetByBrokerIdAsync(Guid brokerId, CancellationToken cancellationToken = default) =>
         await Query()
             .Where(property => property.BrokerId == brokerId && property.Status != Domain.Enums.PropertyStatus.Deleted)

@@ -1,6 +1,8 @@
+using RealStatePortal.Application.Abstractions.Authentication;
 using RealStatePortal.Application.Abstractions.Persistence;
 using RealStatePortal.Application.Abstractions.Time;
 using RealStatePortal.Application.Common;
+using RealStatePortal.Domain.Entities;
 using RealStatePortal.Domain.Enums;
 
 namespace RealStatePortal.Application.Users;
@@ -8,7 +10,9 @@ namespace RealStatePortal.Application.Users;
 public sealed class UserService(
     IUserRepository userRepository,
     IUnitOfWork unitOfWork,
-    IDateTimeProvider dateTimeProvider) : IUserService
+    IDateTimeProvider dateTimeProvider,
+    IAuditLogRepository auditLogRepository,
+    ICurrentUserService currentUserService) : IUserService
 {
     public async Task<Result<IReadOnlyCollection<UserDto>>> GetAllAsync(CancellationToken cancellationToken = default)
     {
@@ -41,6 +45,15 @@ public sealed class UserService(
 
         user.SetActive(request.IsActive, dateTimeProvider.UtcNow);
         await userRepository.ReplaceRolesAsync(user.Id, rolesResult.Value!, cancellationToken);
+        await auditLogRepository.AddAsync(
+            new AuditLog(
+                "User",
+                user.Id,
+                "Updated",
+                currentUserService.UserId,
+                dateTimeProvider.UtcNow,
+                $"Updated active status to {user.IsActive} and roles to {string.Join(", ", request.Roles)}."),
+            cancellationToken);
         await unitOfWork.SaveChangesAsync(cancellationToken);
         return Result<UserDto>.Success(await ToDtoAsync(user, cancellationToken));
     }

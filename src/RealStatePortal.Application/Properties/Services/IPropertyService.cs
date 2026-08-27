@@ -7,6 +7,7 @@ public interface IPropertyService
 {
     Task<Result<PropertyDto>> GetByIdAsync(Guid propertyId, CancellationToken cancellationToken = default);
     Task<Result<IReadOnlyCollection<PropertyDto>>> GetPublishedAsync(CancellationToken cancellationToken = default);
+    Task<Result<IReadOnlyCollection<PropertyDto>>> GetAllAsync(CancellationToken cancellationToken = default);
     Task<Result<IReadOnlyCollection<PropertyDto>>> GetMineAsync(CancellationToken cancellationToken = default);
     Task<Result<IReadOnlyCollection<PropertyDto>>> SearchAsync(PropertySearchRequest request, CancellationToken cancellationToken = default);
     Task<Result<PropertyDto>> CreateAsync(CreatePropertyRequest request, CancellationToken cancellationToken = default);

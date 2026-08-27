@@ -31,6 +31,12 @@ public sealed class PropertyService(
         return Result<IReadOnlyCollection<PropertyDto>>.Success(properties.Select(Map).ToArray());
     }
 
+    public async Task<Result<IReadOnlyCollection<PropertyDto>>> GetAllAsync(CancellationToken cancellationToken = default)
+    {
+        var properties = await propertyRepository.GetAllAsync(cancellationToken);
+        return Result<IReadOnlyCollection<PropertyDto>>.Success(properties.Select(Map).ToArray());
+    }
+
     public async Task<Result<IReadOnlyCollection<PropertyDto>>> GetMineAsync(CancellationToken cancellationToken = default)
     {
         if (!currentUser.UserId.HasValue)
