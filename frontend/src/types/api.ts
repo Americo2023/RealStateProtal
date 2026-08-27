@@ -45,6 +45,36 @@ export interface AuthUser {
   roles: string[];
 }
 
+export interface AdminUser {
+  id: string
+  auth0UserId: string
+  email: string
+  firstName: string
+  lastName: string
+  isActive: boolean
+  roles: string[]
+}
+
+export interface Broker {
+  id: string
+  userId: string
+  fullName: string
+  email: string
+  phone: string
+  bio: string
+  isActive: boolean
+}
+
+export interface AuditLog {
+  id: string
+  entityName: string
+  entityId: string
+  action: string
+  changedByUserId: string | null
+  changedAt: string
+  details: string
+}
+
 export interface PropertyFormData {
   referenceNumber: string;
   title: string;

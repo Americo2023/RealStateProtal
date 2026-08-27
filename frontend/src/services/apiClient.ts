@@ -93,3 +93,36 @@ export const favoritesApi = {
       credentials: "include",
     }),
 };
+
+export const adminApi = {
+  getUsers: () =>
+    request<import("../types/api").AdminUser[]>("/api/users", {
+      credentials: "include",
+    }),
+  updateUser: (userId: string, payload: { isActive: boolean; roles: string[] }) =>
+    request<import("../types/api").AdminUser>(`/api/users/${userId}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify(payload),
+    }),
+  getBrokers: () =>
+    request<import("../types/api").Broker[]>("/api/brokers", {
+      credentials: "include",
+    }),
+  updateBroker: (brokerId: string, payload: Omit<import("../types/api").Broker, "id" | "userId">) =>
+    request<import("../types/api").Broker>(`/api/brokers/${brokerId}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify(payload),
+    }),
+  getProperties: () =>
+    request<import("../types/api").ApiProperty[]>("/api/properties/all", {
+      credentials: "include",
+    }),
+  getAuditLogs: () =>
+    request<import("../types/api").AuditLog[]>("/api/audit-logs", {
+      credentials: "include",
+    }),
+};

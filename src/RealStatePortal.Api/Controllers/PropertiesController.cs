@@ -30,6 +30,11 @@ public sealed class PropertiesController(IPropertyService propertyService) : Api
         return FromResult(result);
     }
 
+    [HttpGet("all")]
+    [Authorize(Policy = "Administrator")]
+    public async Task<IActionResult> GetAll(CancellationToken cancellationToken) =>
+        FromResult(await propertyService.GetAllAsync(cancellationToken));
+
     [HttpGet("{propertyId:guid}")]
     public async Task<IActionResult> GetById(Guid propertyId, CancellationToken cancellationToken)
     {
